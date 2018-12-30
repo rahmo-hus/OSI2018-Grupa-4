@@ -1,0 +1,23 @@
+﻿  Source.cpp
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(17): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(17): warning C4309: 'initializing': truncation of constant value
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(18): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(18): warning C4309: 'initializing': truncation of constant value
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(19): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(19): warning C4309: 'initializing': truncation of constant value
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(20): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(20): warning C4309: 'initializing': truncation of constant value
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(21): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(21): warning C4309: 'initializing': truncation of constant value
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(22): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(22): warning C4309: 'initializing': truncation of constant value
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(23): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(23): warning C4309: 'initializing': truncation of constant value
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(24): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(24): warning C4309: 'initializing': truncation of constant value
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(25): warning C4838: conversion from 'int' to 'char' requires a narrowing conversion
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(25): warning C4309: 'initializing': truncation of constant value
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(74): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(75): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\users\w10\source\repos\osi2018-grupa-4\.vs\hangman\source.cpp(83): warning C4101: 'key': unreferenced local variable
+  hangman.vcxproj -> C:\Users\W10\source\repos\OSI2018-Grupa-4\.vs\x64\Debug\hangman.exe
