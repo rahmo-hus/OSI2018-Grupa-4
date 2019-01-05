@@ -6,7 +6,7 @@
 
 typedef struct kviz
 {
-    char tekst_pitanja[2500],prvi_odgovor[100],drugi_odgovor[100],treci_odgovor[100];
+    char tekst_pitanja[1800],prvi_odgovor[51],drugi_odgovor[51],treci_odgovor[51];
     int tacan_odgovor;
 } KVIZ;
 
