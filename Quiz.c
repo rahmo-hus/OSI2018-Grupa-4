@@ -57,8 +57,15 @@ int kviz_ispis(KVIZ *niz)
     random_broj=rand()%(16+1-0)+0; ///rand() % (max_number + 1 - minimum_number) + minimum_number
     pom[a++]=random_broj;
 
-    printf("\n1.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",niz[random_broj].tekst_pitanja,niz[random_broj].prvi_odgovor,niz[random_broj].drugi_odgovor,niz[random_broj].treci_odgovor);
-    scanf("%d",&tacan);
+    char x[2]="";
+    do
+    {
+
+        printf("\n1.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",niz[random_broj].tekst_pitanja,niz[random_broj].prvi_odgovor,niz[random_broj].drugi_odgovor,niz[random_broj].treci_odgovor);
+        scanf("%s",x);
+        tacan=x[0]-'0';
+    }
+    while(x[0]<48 || x[0]>51);
 
     if(tacan==0)
         return broj_bodova;
@@ -90,9 +97,10 @@ int kviz_ispis(KVIZ *niz)
             do
             {
                 printf("\n%d.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",br,niz[random_broj].tekst_pitanja,niz[random_broj].prvi_odgovor,niz[random_broj].drugi_odgovor,niz[random_broj].treci_odgovor);
-                scanf("%d",&tacan);
+                scanf("%s",x);
+                tacan=x[0]-'0';
             }
-            while(tacan<0 || tacan>3);
+            while(x[0]<48 || x[0]>51);
             if(tacan==0)
                 return broj_bodova;
 
@@ -117,14 +125,16 @@ int Quiz_game(FILE *fp)
 {
     KVIZ *niz;
     int j,ukupan_broj_bodova;
+    char x[2]="";
     niz=(KVIZ*)calloc(17,sizeof(KVIZ));
     do
     {
         printf("Close the game[0] or choose a category: GEOGRAPHY[1] GENERAL[2] MUSIC[3] \nEnter the number: ");
-        scanf("%d",&j);
+        scanf("%s",x);
+        j=x[0]-'0';
         printf("\n");
     }
-    while(j<0 || j>3);
+    while(x[0]<48 || x[0]>51);
 
     if(j==0)
         return 0;
