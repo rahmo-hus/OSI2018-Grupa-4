@@ -121,7 +121,7 @@ int kviz_ispis(KVIZ *niz)
     return broj_bodova;
 }
 
-int Quiz_game(FILE *fp)
+int Quiz_game()
 {
     KVIZ *niz;
     int j,ukupan_broj_bodova;
