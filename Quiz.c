@@ -123,6 +123,7 @@ int kviz_ispis(KVIZ *niz)
 
 int Quiz_game()
 {
+    FILE *fp;
     KVIZ *niz;
     int j,ukupan_broj_bodova;
     char x[2]="";
