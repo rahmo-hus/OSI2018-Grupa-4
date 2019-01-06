@@ -12,6 +12,6 @@ typedef struct kviz
 
 void kviz_ucitavanje(FILE *fp, KVIZ *niz);
 int kviz_ispis(KVIZ *niz);
-int Quiz_game(FILE *fp);
+int Quiz_game();
 
 #endif // QUIZ_H_INCLUDED
