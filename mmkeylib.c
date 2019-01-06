@@ -1,5 +1,8 @@
 #include "mmkeylib.h" 
+#include <time.h>
+#include <stdlib.h>
 //TODO: Document all of this.
+static time_t exp_table[4] = { 3600,86400,604800, -1 };
 static void scramble(uint8_t key[16])
 {
 	for (int i = 14; i >=0; i--)
@@ -27,7 +30,7 @@ void encode(uint32_t data[4], uint8_t key[16])
 {
 	uint64_t prekey= 0;
 	prekey |= (((uint64_t)(data[0] & 0x3F)<<42 | ((uint64_t)data[1]&0xF0000000)<<4));
-	prekey |= ((uint64_t)data[1] & 0x0FFFFFF << 4) | ((uint64_t)data[2] & 0x03 << 2) | ((uint64_t)data[3] & 0x03);
+	prekey |= (((uint64_t)(data[1] & 0x0FFFFFFF)) << 4) | ((uint64_t)(data[2] & 0x03) << 2) | ((uint64_t)data[3] & 0x03);
 	int8_t sum = 0;
 	for (int i = 0; i <= 15; i++)
 	{
@@ -42,7 +45,7 @@ void encode(uint32_t data[4], uint8_t key[16])
 	}
 	
 	scramble(key);
-	//printf("\n%.16s", key);
+	printf("\n%.16s", key);
 }
 
 int decode(uint8_t key[16], uint32_t data[4])
@@ -65,6 +68,74 @@ int decode(uint8_t key[16], uint32_t data[4])
 	data[2] = (prekey >> 2) & 0x03;
 	data[3] = prekey & 0x03;
 	sum = sum < 0 ? -sum : sum;
+	scramble(key);
 	if (sum == CN) return 1;	//Key Valid
 	return 0;					//Key Invalid
+}
+uint8_t* requestKey(uint32_t id, uint32_t duration)
+{
+	uint8_t* key = malloc(16);
+	uint32_t data[4];
+	data[0] = rand() % 64;
+	data[1] = time(NULL);
+	data[2] = id;
+	data[3] = duration;
+	encode(data, key);
+	return key;
+}
+time_t getKeyCreationTime(uint8_t key[16])
+{
+	uint32_t data[4];
+	int valid = decode(key, data);
+	if (valid)
+	{
+		return data[1];
+	}
+	else
+		return 0;
+}
+time_t getKeyExpirationTime(uint8_t key[16])
+{
+	uint32_t data[4];
+	decode(key, data);
+	if (data[3] == 3)
+	{
+		char size = sizeof(time_t);
+		if (size == 4) return 0x7FFFFFFF;
+		if (size == 8) return 0x7FFFFFFFFFFFFFFF;
+	}
+	time_t key_time = getKeyCreationTime(key);
+	time_t key_expire_time = key_time + exp_table[data[3]];
+	return key_expire_time;
+}
+int getKeyGameID(uint8_t key[16])
+{
+	uint32_t data[4];
+	int valid = decode(key, data);
+	if (valid)
+	{
+		return data[2];
+	}
+	return -1;
+}
+int getKeyDuration(uint8_t key[16])
+{
+	uint32_t data[4];
+	int valid = decode(key, data);
+	if (valid)
+	{
+		return exp_table[data[3]];
+	}
+	return 0;
+}
+time_t verifyKey(uint8_t key[16])
+{
+	uint32_t data[4];
+	int valid = decode(key, data);
+	if (valid)
+	{
+		time_t time_rem = getKeyExpirationTime(key) - time(NULL);
+		if (time_rem > 0) return time_rem;
+	}
+	return 0;
 }
