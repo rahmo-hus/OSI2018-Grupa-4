@@ -3,9 +3,8 @@
 
 int main()
 {
-    FILE *fp;
     int i;
-    i=Quiz_game(fp);
+    i=Quiz_game();
     printf("\nKonacan broj bodova iz igrice Quiz je: %d",i);
     return 0;
 }
