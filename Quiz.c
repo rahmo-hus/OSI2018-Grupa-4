@@ -16,10 +16,8 @@ void kviz_ucitavanje(FILE *fp, KVIZ *niz)
         string=(char*)calloc(n,sizeof(char));
         a=0;
         char x;
-        while((x=fgetc(fp))!='\n')
+        while((x=fgetc(fp))!='\n') //ucitavanje svakom pitanja pojedinacno
             string[a++]=x;
-        //while((string[a++]=fgetc(fp))!=10);
-        //printf("\n%d. %s",i+1,string);
         string[a]='\0';
 
         b=0;
@@ -87,7 +85,7 @@ int kviz_ispis(KVIZ *niz)
         srand(time(NULL));
         random_broj=rand()%(16+1-0)+0;
         for(j=0; j<a; j++)
-            if(random_broj==pom[j])
+            if(random_broj==pom[j]) //provjera da se ne ponovi isto pitanje
                 p++;
         if(p==0)
         {
