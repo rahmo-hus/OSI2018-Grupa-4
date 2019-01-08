@@ -8,11 +8,12 @@
 #include <windows.h>
 #include "Hangman.h";
 
+int globalCount = 0;
+
 bool hangman(bool x)
 {
-	static int i = 0;
 	if (!x)
-		i++;
+		globalCount++;
 	char *message = "PRESS 'esc' BUTTON TO QUIT PLAYING.";
 	char staticline[16] = { ' ',' ', 219, 219 ,219,219,219,219,219,219,219,219,219,219,219,'\0' },//extended ASCII characters
 		bar[4] = { ' ', ' ', 219, '\0' }, //loop 7
@@ -23,7 +24,7 @@ bool hangman(bool x)
 		hang4x1[12] = { ' ',' ',219,' ',' ' ,' ' ,' ' ,' ' ,' ' ,' ',0x2F, '\0' },
 		hang4x2[14] = { ' ',' ',219,' ',' ' ,' ' ,' ' ,' ' ,' ' ,' ',0x5C,179,0x2F, '\0' },
 		hang5[14] = { ' ',' ',219,' ',' ' ,' ' ,' ' ,' ' ,' ' ,' ',0x2F,' ', 0x5C, '\0' };
-	switch (i)
+	switch (globalCount)
 	{
 	case 0:
 		printf("%s%105s", staticline, message);
@@ -140,5 +141,6 @@ int playHangman()
 	}
 	printf("\n\nGAME OVER");
 	free(tmp);
+	globalCount = 0;
 	return pts;
 }
