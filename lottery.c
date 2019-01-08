@@ -1,6 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+int check_number_of_hits(int br)
+{
+    int tmp=100-br;
+    if(tmp==0)
+        return 0;
+    if(tmp==100)
+        return 4;
+    if(tmp==67 || tmp==75 || tmp==80)
+        return 3;
+    if(tmp==50)
+        return 2;
+}
 int check_existing(int array[],int number,int n)
 {
     int i;
@@ -17,7 +29,7 @@ int check_hits(int array[],int number)
             return 1;
     return 0;
 }
-int lottery()
+int lottery(int br)
 {
     printf("Welcome to the LOTTERY!\n");
     int user_numbers[7];
@@ -52,7 +64,7 @@ int lottery()
     while(check);
     printf("All the numbers are correct. We will start the LOTTERY now!GOOD LUCK!!!\n");
     srand(time(NULL));//every time that lottery is played numbers will be different//
-    int k,hits=0;
+    int k,hits=0,tmp=check_number_of_hits(br);
     for(int i=0; i<20; i++)
     {
         lottery_numbers[i]=rand()%45 +1;
@@ -68,7 +80,7 @@ int lottery()
                 for(k=0;k<7;k++)
                 if(lottery_numbers[j]==user_numbers[k])
                 hits++;
-            if(hits>4)
+            if(hits>tmp)
                 while(check_hits(user_numbers,lottery_numbers[i]))
             {
                 lottery_numbers[i]=rand()%45 +1;
