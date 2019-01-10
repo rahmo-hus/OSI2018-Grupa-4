@@ -4,14 +4,14 @@
 #include <stdlib.h>
 #include <time.h>
 
-typedef struct kviz
+typedef struct quiz
 {
-    char tekst_pitanja[1800],prvi_odgovor[51],drugi_odgovor[51],treci_odgovor[51];
-    int tacan_odgovor;
-} KVIZ;
+    char text_questions[1800],first_answer[51],second_answer[51],third_answer[51];
+    int correct_answer;
+} QUIZ;
 
-void kviz_ucitavanje(FILE *fp, KVIZ *niz);
-int kviz_ispis(KVIZ *niz);
+void quiz_loading(FILE *fp, QUIZ *array);
+int quiz_print(QUIZ *array);
 int Quiz_game();
 
 #endif // QUIZ_H_INCLUDED
