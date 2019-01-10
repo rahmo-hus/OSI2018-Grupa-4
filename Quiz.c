@@ -29,7 +29,7 @@ void quiz_loading(FILE *fp, QUIZ *array)
         a++;
         b=0;
         while(string[a]!='-' && string[a]!='\n')
-            array[i].fisrt_answer[b++]=string[a++];
+            array[i].first_answer[b++]=string[a++];
         array[i].first_answer[b]='\0';
         a++;
         b=0;
@@ -59,13 +59,13 @@ int quiz_print(QUIZ *array)
     do
     {
 
-        printf("\n1.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",array[random_number].text_guestions,array[random_number].first_answer,array[random_number].second_answer,array[random_number].third_answer);
+        printf("\n1.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",array[random_number].text_questions,array[random_number].first_answer,array[random_number].second_answer,array[random_number].third_answer);
         scanf("%s",x);
         correct=x[0]-'0';
     }
     while(x[0]<48 || x[0]>51);
 
-    if(corect==0)
+    if(correct==0)
         return points;
 
     else if(correct==array[random_number].correct_answer)
@@ -94,7 +94,7 @@ int quiz_print(QUIZ *array)
 
             do
             {
-                printf("\n%d.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",br,niz[random_broj].tekst_pitanja,niz[random_broj].prvi_odgovor,niz[random_broj].drugi_odgovor,niz[random_broj].treci_odgovor);
+                printf("\n%d.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",br,array[random_number].text_questions,array[random_number].first_answer,array[random_number].second_answer,array[random_number].third_answer);
                 scanf("%s",x);
                 correct=x[0]-'0';
             }
