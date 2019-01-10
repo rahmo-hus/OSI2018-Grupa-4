@@ -15,3 +15,4 @@ int quiz_print(QUIZ *array);
 int Quiz_game();
 
 #endif // QUIZ_H_INCLUDED
+
