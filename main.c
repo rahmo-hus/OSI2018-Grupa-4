@@ -435,4 +435,304 @@ int main()
 	SaveUser(userinfo, user);
 
 	SaveGames(GAME_INFO_FILENAME, mitems, count);
+	HANDLE conOutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	cls(conOutHandle);
+	short color = 0x07;
+	int c;
+	int menuIndex = 0;
+	int32_t temp_score = 0;
+	int show_stats = 0;
+	FILE* sc_file;
+	char sc_name[20];
+	SCORE* top_scores = NULL;
+	while (TRUE)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			if (mitems[i].unlocked && !verifyKey(mitems[i].key))
+				mitems[i].disabled = 1;
+		}
+		SetCursorPosition(conOutHandle, 0, 0);
+		SetConsoleTextAttribute(conOutHandle, color = (color & 0xFF00) | 0x08);
+		//printf("%s\t%s", "Pozdrav John Rambo", "Poeni:10");
+		printf("Welcome, %s.\tPoints:%d", user->name, user->points);
+		if (!mitems[menuIndex].disabled)
+		{
+			printf("\nGame:%s\tKey %s", mitems[menuIndex].unlocked ? "Unlocked" : "Locked", mitems[menuIndex].unlocked ? "" : "required");
+			if (mitems[menuIndex].unlocked)
+			{
+				if (!(verifyKey(mitems[menuIndex].key)&& getKeyGameID(mitems[menuIndex].key) == mitems[menuIndex].id))
+				{
+					mitems[menuIndex].unlocked = 0;
+					for (int i = 0; i < 16; i++)
+						mitems[menuIndex].key[i] = '0';
+				}
+				if (getKeyDuration(mitems[menuIndex].key) != -1)
+				{
+					char str_date[64];
+					time_t key_time = getKeyExpirationTime(mitems[menuIndex].key);
+					struct tm *date = localtime(&key_time);
+					strftime(str_date, 64, "%c", date);
+					printf("expires on %s", str_date);
+				}
+				else
+				{
+					printf("never expires");
+				}
+			}
+		}
+		else
+		{
+			printf("\nGame:Disabled\n");
+		}
+		
+		SetCursorPosition(conOutHandle, 0, 2);
+		color = GetConsoleColor(conOutHandle);
+		//Print out menu game buttons
+		for (int i = 0; i < count; i++)
+		{
+			if (i == menuIndex) SetConsoleTextAttribute(conOutHandle, color ^= COMMON_LVB_REVERSE_VIDEO);
+			printf("%-15s", mitems[i].title);
+			if (i == menuIndex) SetConsoleTextAttribute(conOutHandle, color ^= COMMON_LVB_REVERSE_VIDEO);
+		}
+
+		DESC_BOX();
+
+		SetConsoleTextAttribute(conOutHandle, color = (color & 0xFF00) | 0x37);
+		printf(" E(x)it | %s | S(a)ve stats | (U)ninstall | (R)eset all ", !show_stats ? "(S)how stats" : "(S)how desc.");
+		SetConsoleTextAttribute(conOutHandle, color = (color & 0xFF00) | 0x87);
+		SetCursorPosition(conOutHandle, 0, 3);
+		if (show_stats)
+		{
+			int i = 1;
+			char str_date[20];
+			printf("Num\tDate\t\tScore\n");
+			top_scores = TopTenFromHistory(mitems[menuIndex].score_history);
+			for (SCORE *cur = top_scores; cur; cur = cur->next)
+			{
+				struct tm *date = localtime(&cur->date);
+				strftime(str_date, 20, "%F", date);
+				printf("%d\t%s\t%d\n", i++, str_date, cur->score);
+			}
+			for (SCORE* cur = top_scores; cur; )
+			{
+				SCORE* tmp = cur;
+				cur = cur->next;
+				free(tmp);
+			}
+			top_scores = NULL;
+
+		}
+		else
+		{
+			printf("%s", mitems[menuIndex].description);
+		}
+		c = _getch();				//TODO: use w version of this function in later versions. _getch is broken on april update.
+		switch (c)
+		{
+		case 'x':
+
+			goto exit;
+			break;
+		case 's':
+			show_stats = !show_stats;
+			break;
+		case 'a':
+			top_scores = TopTenFromHistory(mitems[menuIndex].score_history);
+			strncpy(sc_name, mitems[menuIndex].title, 16);
+			strcat(sc_name, ".csv");
+			sc_file = fopen(sc_name, "w");
+			ExportScore(sc_file, top_scores);
+			fclose(sc_file);
+			for (SCORE* cur = top_scores; cur; )
+			{
+				SCORE* tmp = cur;
+				cur = cur->next;
+				free(tmp);
+			}
+			top_scores = NULL;
+			break;
+		case 'u':
+			if (mitems[menuIndex].disabled) break;
+			DESC_BOX();
+			SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - strlen("Are you sure? This will permanently disable this game until reinstall") / 2, 9);
+			printf("Are you sure? This will permanently disable this game until reinstall. (y/(any no))");
+			if (_getch() == 'y')
+			{
+				DESC_BOX();
+				SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - strlen("Game Disabled. Reset to re-enable") / 2, 9);
+				printf("Game Disabled. Reset to re-enable");
+				mitems[menuIndex].disabled = 1;
+				_getch();
+			}
+			break;
+		case 'r':
+			cls(conOutHandle);
+			printf("Are you sure? (y/(any no))");
+			if(_getch()=='y')
+				goto nuke;
+		}
+		if (c == 0 || c == 224) // Non AlphaNum key pressed
+		{
+			c = _getch();
+			switch (c)
+			{
+			case 75:
+				menuIndex = (unsigned)(menuIndex - 1) % 4;
+				break;
+			case 77:
+				menuIndex = (menuIndex + 1) % 4;
+				break;
+			}
+		}
+		if (c == 13 && !mitems[menuIndex].disabled) //Enter
+		{
+//Todo:: Add entering and exiting the game
+			if (verifyKey(mitems[menuIndex].key) > 0)
+			{
+
+			}
+			else
+			{
+				DESC_BOX();
+				char new_key[20] = { 0 };
+				int key_index = 0;
+				//0000-0000-0000-0000
+				SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - strlen("Input Game Key") / 2, 9);
+				printf("Input Game Key");
+				SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - 9, 8);
+				for (int i = 0; i < 3; i++)
+				{
+					printf("    -");
+				}
+				printf("    ");
+				SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - 9, 8);
+				
+				int leave_key_loop = 0;
+				while (!leave_key_loop)
+				{
+					
+					c = _getch();
+					switch (c)
+					{
+					case 13: //Enter
+						if (verifyKey(new_key)&&getKeyGameID(new_key) == mitems[menuIndex].id)
+						{
+							const char* success_message = "Key appears correct. Press any key to proceed";
+							if (mitems[menuIndex].unlock_price > user->points && mitems[menuIndex].unlock_price>0)
+							{
+								success_message = "You do not have enough points to unlock this game. Try again later.";
+							}
+							else
+							{
+								user->points -= mitems[menuIndex].unlock_price;
+								for (int i = 0; i < 16; i++)
+									mitems[menuIndex].key[i] = new_key[i];
+								mitems[menuIndex].unlocked = 1;
+							}
+							
+							SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - strlen(success_message) / 2, 9);
+							printf("%s", success_message);
+							leave_key_loop = 1;
+							_getch();
+
+						}
+						else
+						{
+							while (!leave_key_loop)
+							{
+								const char *invalid_message = "Invalid key. Try Again? (y/n)";
+								SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - strlen(invalid_message) / 2, 9);
+								printf("%s", invalid_message);
+								c = _getch();
+								if (c == 'y')
+								{
+
+									key_index = 0;
+									DESC_BOX();
+									SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - strlen("Input Game Key") / 2, 9);
+									printf("Input Game Key");
+									SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - 9, 8);
+									for (int i = 0; i < 3; i++)
+									{
+										printf("    -");
+									}
+									printf("    ");
+									SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - 9, 8);
+									break;
+								}
+								else if (c == 'n')
+									leave_key_loop = 1;
+							}
+						}
+						break;
+					case 'x':
+						leave_key_loop = 1;
+						break;
+					default:
+						if (c >= '0'&&c <= '9')
+						{
+							if (key_index < 16)
+							{
+								new_key[key_index++] = c;
+								printf("%c", c);
+								if (key_index % 4 == 0)
+									SetCursorPosition(conOutHandle, GetXPos(conOutHandle) + 1, GetYPos(conOutHandle));
+
+							}
+						}
+						if (c == 8)
+						{
+							// Backspace
+							if (key_index > 0)
+							{
+
+								if (key_index % 4 == 0)
+									SetCursorPosition(conOutHandle, GetXPos(conOutHandle) - 1, GetYPos(conOutHandle));
+								SetCursorPosition(conOutHandle, GetXPos(conOutHandle) - 1, GetYPos(conOutHandle));
+								printf(" ");
+								SetCursorPosition(conOutHandle, GetXPos(conOutHandle) - 1, GetYPos(conOutHandle));
+								new_key[key_index--] = '\0';
+							}
+						}
+					}
+				}
+			}
+		}
+		else if(c == 13 && mitems[menuIndex].disabled)
+		{
+			DESC_BOX();
+			SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - strlen("Game Disabled. Reset to re-enable") / 2, 9);
+			printf("Game Disabled. Reset to re-enable");
+		}
+		SetConsoleTextAttribute(conOutHandle, color = (color & 0xFF00) | 0x07);
+		cls(conOutHandle);
+	}
+exit:
+	SAVE_ALL();
+	fclose(userinfo);
+	return 0;
+
+nuke: // Erase all data
+	cls(conOutHandle);
+	_fcloseall();
+	int fail = 0;
+	fail =remove("USER_DAT.bin");
+	remove("Playlist.dat");
+	for (int i = 0; i < count; i++)
+	{
+		
+		memcpy(mitems[i].key, "0000000000000000", 16);
+		mitems[i].unlocked = 0;
+		mitems[i].disabled = 0;
+		char buffer[128]; 
+		sprintf(buffer, "%s_score.scr", mitems[i].title);
+		fail = remove(buffer)?fail:1;
+	}
+	SaveGames(GAME_INFO_FILENAME, mitems, count);
+	printf("Bye Bye");
+	Sleep(1000);
+	return 0;
+}
+
 }
