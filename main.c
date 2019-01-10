@@ -385,7 +385,6 @@ SaveGames(GAME_INFO_FILENAME, mitems, count); \
 	}
 int main()
 {
-	//TODO: Utilize these functions to make a menu.
 	SetConsoleTitle("Lucky Rouza");
 	MENU_ITEM  *mitems;
 	FILE *gameinfo = fopen("gameinfo.txt", "r");
@@ -587,10 +586,43 @@ int main()
 		}
 		if (c == 13 && !mitems[menuIndex].disabled) //Enter
 		{
-//Todo:: Add entering and exiting the game
 			if (verifyKey(mitems[menuIndex].key) > 0)
 			{
-
+				SetConsoleTextAttribute(conOutHandle, color = (color & 0xFF00) | 0x07);
+				cls(conOutHandle);
+				int leave = 0;
+				while (!leave)
+				{
+					if(user->points >=mitems[menuIndex].play_price || !mitems[menuIndex].play_price)
+						user->points -= mitems[menuIndex].play_price;
+					else
+					{
+						//Display message for lack of points
+						DESC_BOX();
+						SetCursorPosition(conOutHandle, GetBufferWidth(conOutHandle) / 2 - strlen("Not enough points") / 2, 9);
+						printf("Not enough points");
+						_getch();
+						break;
+					}
+					cls(conOutHandle);
+					temp_score = mitems[menuIndex].game();
+					user->points += temp_score;
+					SCORE ts;
+					ts.score = temp_score;
+					ts.date = time(NULL);
+					ts.next = NULL;
+					AddHistory(&mitems[menuIndex], ts);
+					SAVE_ALL();
+					printf("\nContinue playing %s? (y/n)\n", mitems[menuIndex].title);
+					while (!leave)
+					{
+						c = _getch();
+						if (c == 'n' || c == 'N')
+							leave = 1;
+						else if (c == 'y' || c == 'Y') break;
+					}
+				}
+				cls(conOutHandle);
 			}
 			else
 			{
