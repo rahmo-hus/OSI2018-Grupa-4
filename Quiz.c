@@ -2,7 +2,7 @@
 #define QUIZ_C_INCLUDED
 #include "Quiz.h"
 
-void kviz_ucitavanje(FILE *fp, KVIZ *niz)
+void quiz_loading(FILE *fp, QUIZ *array)
 {
     int i,a,b;
 
@@ -16,116 +16,116 @@ void kviz_ucitavanje(FILE *fp, KVIZ *niz)
         string=(char*)calloc(n,sizeof(char));
         a=0;
         char x;
-        while((x=fgetc(fp))!='\n') //ucitavanje svakom pitanja pojedinacno
+        while((x=fgetc(fp))!='\n') //loading every question individualy//
             string[a++]=x;
         string[a]='\0';
 
         b=0;
         a=0;
         while(string[a]!='-' && string[a]!='\n')
-            niz[i].tekst_pitanja[b++]=string[a++];
-        niz[i].tekst_pitanja[b]='\0';
+            array[i].text_questions[b++]=string[a++];
+        array[i].text_questions[b]='\0';
 
         a++;
         b=0;
         while(string[a]!='-' && string[a]!='\n')
-            niz[i].prvi_odgovor[b++]=string[a++];
-        niz[i].prvi_odgovor[b]='\0';
+            array[i].fisrt_answer[b++]=string[a++];
+        array[i].first_answer[b]='\0';
         a++;
         b=0;
         while(string[a]!='-' && string[a]!='\n')
-            niz[i].drugi_odgovor[b++]=string[a++];
-        niz[i].drugi_odgovor[b]='\0';
+            array[i].second_answer[b++]=string[a++];
+        array[i].second_answer[b]='\0';
         a++;
         b=0;
         while(string[a]!='-' && string[a]!='\n')
-            niz[i].treci_odgovor[b++]=string[a++];
-        niz[i].treci_odgovor[b]='\0';
+            array[i].third_answer[b++]=string[a++];
+        array[i].third_answer[b]='\0';
         a++;
-        niz[i].tacan_odgovor=string[a]-'0';
+        array[i].correct_answer=string[a]-'0';
 
     }
 }
 
-int kviz_ispis(KVIZ *niz)
+int quiz_print(QUIZ *array)
 {
-    int random_broj,pom[5],br=1,a=0,p=0,j,tacan,broj_bodova=0;
+    int random_number,pom[5],br=1,a=0,p=0,j,correct,points=0;
 
     srand(time(NULL));
-    random_broj=rand()%(16+1-0)+0; ///rand() % (max_number + 1 - minimum_number) + minimum_number
-    pom[a++]=random_broj;
+    random_number=rand()%(16+1-0)+0; ///rand() % (max_number + 1 - minimum_number) + minimum_number
+    pom[a++]=random_number;
 
     char x[2]="";
     do
     {
 
-        printf("\n1.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",niz[random_broj].tekst_pitanja,niz[random_broj].prvi_odgovor,niz[random_broj].drugi_odgovor,niz[random_broj].treci_odgovor);
+        printf("\n1.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",array[random_number].text_guestions,array[random_number].first_answer,array[random_number].second_answer,array[random_number].third_answer);
         scanf("%s",x);
-        tacan=x[0]-'0';
+        correct=x[0]-'0';
     }
     while(x[0]<48 || x[0]>51);
 
-    if(tacan==0)
-        return broj_bodova;
+    if(corect==0)
+        return points;
 
-    else if(tacan==niz[random_broj].tacan_odgovor)
+    else if(correct==array[random_number].correct_answer)
     {
         printf("\n>>>Correct answer!<<<\n");
-        broj_bodova+=20;
+        points+=20;
     }
     else
     {
-        printf("\n>>>Incorrect answer! The correct answer is answer number %d.<<<\n",niz[random_broj].tacan_odgovor);
-        broj_bodova-=30;
+        printf("\n>>>Incorrect answer! The correct answer is answer number %d.<<<\n",array[random_number].correct_answer);
+        points-=30;
     }
 
     while(br<=4)
     {
         p=0;
         srand(time(NULL));
-        random_broj=rand()%(16+1-0)+0;
+        random_number=rand()%(16+1-0)+0;
         for(j=0; j<a; j++)
-            if(random_broj==pom[j]) //provjera da se ne ponovi isto pitanje
+            if(random_number==pom[j]) //making sure that the same questions does not appear more than once//
                 p++;
         if(p==0)
         {
-            pom[a++]=random_broj;
+            pom[a++]=random_number;
             br++;
 
             do
             {
                 printf("\n%d.QUESTION: \n%s\n 1.%s\n 2.%s\n 3.%s\nClose the game[0] or enter the ordinal number of the correct answer: ",br,niz[random_broj].tekst_pitanja,niz[random_broj].prvi_odgovor,niz[random_broj].drugi_odgovor,niz[random_broj].treci_odgovor);
                 scanf("%s",x);
-                tacan=x[0]-'0';
+                correct=x[0]-'0';
             }
             while(x[0]<48 || x[0]>51);
-            if(tacan==0)
-                return broj_bodova;
+            if(correct==0)
+                return points;
 
-            else if(tacan==niz[random_broj].tacan_odgovor)
+            else if(correct==array[random_number].correct_answer)
             {
                 printf("\n>>>Correct answer!<<<\n");
-                broj_bodova+=20;
+                points+=20;
             }
             else
             {
-                printf("\n>>>Incorrect answer! The correct answer is answer number %d.<<<\n",niz[random_broj].tacan_odgovor);
-                broj_bodova-=30;
+                printf("\n>>>Incorrect answer! The correct answer is answer number %d.<<<\n",array[random_number].correct_answer);
+                points-=30;
             }
 
         }
     }
 
-    return broj_bodova;
+    return points;
 }
 
 int Quiz_game()
 {
     FILE *fp;
-    KVIZ *niz;
-    int j,ukupan_broj_bodova;
+    QUIZ *array;
+    int j,final_points;
     char x[2]="";
-    niz=(KVIZ*)calloc(17,sizeof(KVIZ));
+    array=(QUIZ*)calloc(17,sizeof(QUIZ));
     do
     {
         printf("Close the game[0] or choose a category: GEOGRAPHY[1] GENERAL[2] MUSIC[3] \nEnter the number: ");
@@ -141,30 +141,30 @@ int Quiz_game()
     if(j==1)
     {
         if((fp=fopen("geography.txt","r"))!=NULL)
-            kviz_ucitavanje(fp,niz);
-        ukupan_broj_bodova=kviz_ispis(niz);
+            quiz_loading(fp,array);
+        final_points=quiz_print(array);
     }
     else if(j==2)
     {
         if((fp=fopen("general.txt","r"))!=NULL)
-            kviz_ucitavanje(fp,niz);
-        ukupan_broj_bodova=kviz_ispis(niz);
+            quiz_loading(fp,array);
+        final_points=quiz_print(array);
     }
     else
     {
         if((fp=fopen("music.txt","r"))!=NULL)
-            kviz_ucitavanje(fp,niz);
-        ukupan_broj_bodova=kviz_ispis(niz);
+            quiz_loading(fp,array);
+        final_points=quiz_print(array);
     }
 
-    printf("\nTHE FINAL NUMBER OF POINTS: %d",ukupan_broj_bodova);
-    if(ukupan_broj_bodova==100)
+    printf("\nTHE FINAL NUMBER OF POINTS: %d",final_points);
+    if(final_points==100)
     {
         printf("\nYou have correctly answered all the questions! The prize is an additional 50 points! CONGRATULATIONS!");
-        ukupan_broj_bodova=150;
-        printf("\nTHE FINAL NUMBER OF POINTS: %d\n",ukupan_broj_bodova);
+        final_points=150;
+        printf("\nTHE FINAL NUMBER OF POINTS: %d\n",final_points);
     }
-    return ukupan_broj_bodova;
+    return final_points;
 
 }
 
