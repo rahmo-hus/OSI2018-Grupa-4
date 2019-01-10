@@ -383,7 +383,56 @@ SaveGames(GAME_INFO_FILENAME, mitems, count); \
 		printf("%*c", GetBufferWidth(conOutHandle) * 11 - 1, 178);\
 		SetConsoleTextAttribute(conOutHandle, color = (color & 0xFF00) | 0x07);\
 	}
-	int main()
+int main()
 {
 	//TODO: Utilize these functions to make a menu.
+	SetConsoleTitle("Lucky Rouza");
+	MENU_ITEM  *mitems;
+	FILE *gameinfo = fopen("gameinfo.txt", "r");
+	int count = LoadGames(gameinfo, &mitems);
+	fclose(gameinfo);
+	USER *user;
+	FILE *userinfo = fopen("USER_DAT.bin", "rb+");
+	if (LoadUser(userinfo, &user) == -1)
+	{
+		user = malloc(sizeof(USER));
+		memset(user->name, 0, 16);
+		printf("Greetings.\nWelcome to Lucky Rouza. To continue, please enter your username.\n");
+		scanf("%15s", &user->name);
+		int c;
+		while ((c = fgetc(stdin)) != '\n' && c != EOF); /* Flush stdin */
+		user->points = 10;
+		fclose(fopen("USER_DAT.bin", "wb"));
+		//Erase any potential old game data.
+		for (int i = 0; i < count; i++)
+		{
+
+			memcpy(mitems[i].key, "0000000000000000", 16);
+			mitems[i].unlocked = 0;
+			mitems[i].disabled = 0;
+			char buffer[128];
+			sprintf(buffer, "%s_score.scr", mitems[i].title);
+			remove(buffer);
+			for (SCORE* cur = mitems[i].score_history; cur; )
+			{
+				SCORE* temp = cur;
+				cur = cur->next;
+				free(temp);
+			}
+			mitems[i].score_history = NULL;
+
+		}
+		printf("Welcome %s", user->name);
+		GenerateKeys(mitems, count);
+		SaveGames(GAME_INFO_FILENAME, mitems, count);
+	}
+	else
+	{
+		fclose(userinfo);
+	}
+
+	userinfo = fopen("USER_DAT.bin", "rb+");
+	SaveUser(userinfo, user);
+
+	SaveGames(GAME_INFO_FILENAME, mitems, count);
 }
