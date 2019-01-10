@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 int check_number_of_hits(int br)
 {
     int tmp=100-br;
@@ -35,13 +36,19 @@ int lottery(int br)
     int user_numbers[7];
     int lottery_numbers[20];
     printf("Please enter 7 numbers from 1-45:\n");
-    int i,j;
+    int i,j,check;
+    char help;
     for(i=0; i<7; i++)
     {
-        printf("Enter %d. number:",i+1);
-        scanf("%d",&user_numbers[i]);
+           do
+        {
+            printf("Enter your %d.number:",i+1);
+            scanf("%s",&help);
+            if(isdigit(help)==0)
+                printf("You did not entered a number.Please enter a number between 1 and 45.\n");
+        } while(isdigit(help)==0);
+        user_numbers[i]==atoi(&help);
     }
-    int check;
     do
     {
         check=0;
@@ -106,3 +113,5 @@ int lottery(int br)
     printf("Hope you are happy with your score! See you soon!\n");
     return points;
 }
+
+   
