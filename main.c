@@ -766,5 +766,3 @@ nuke: // Erase all data
 	Sleep(1000);
 	return 0;
 }
-
-}
