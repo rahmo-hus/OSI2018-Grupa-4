@@ -2,6 +2,21 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <ctype.h>
+int check_input(char arr[])
+{
+    int i=0,p=1;
+    while(arr[i])
+    {
+        if(isdigit(arr[i])==0)
+            p=0;
+        i++;
+    }
+    if(p==0)
+        return 1;
+    else
+        return 0;
+}
 int check_number_of_hits(int br)
 {
     int tmp=100-br;
@@ -37,17 +52,17 @@ int lottery(int br)
     int lottery_numbers[20];
     printf("Please enter 7 numbers from 1-45:\n");
     int i,j,check;
-    char help;
+    char *help=(char*)calloc(5,1);
     for(i=0; i<7; i++)
     {
            do
         {
             printf("Enter your %d.number:",i+1);
-            scanf("%s",&help);
-            if(isdigit(help)==0)
+            scanf("%s",help);
+            if(check_input(help)==1)
                 printf("You did not entered a number.Please enter a number between 1 and 45.\n");
-        } while(isdigit(help)==0);
-        user_numbers[i]==atoi(&help);
+        } while(check_input(help)==1);
+        user_numbers[i]=atoi(help);
     }
     do
     {
@@ -113,5 +128,6 @@ int lottery(int br)
     printf("Hope you are happy with your score! See you soon!\n");
     return points;
 }
+
 
    
